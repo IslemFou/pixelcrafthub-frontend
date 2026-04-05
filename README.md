@@ -34,3 +34,30 @@ Ce projet est propulsé par les dernières technologies du web :
    ```bash
    git clone [https://github.com/IslemFou/pixelcrafthub-frontend.git](https://github.com/IslemFou/pixelcrafthub-frontend.git)
    cd pixelcrafthub-frontend
+
+## Installer les dépendances :
+
+Bash
+npm install
+Lancer le serveur de développement :
+
+Bash
+npm run dev
+Accéder à l'application :
+Ouvrez http://localhost:5173 dans votre navigateur.
+
+## 📂 Structure du Projet
+Plaintext
+src/
+ ├── api/           # Configuration Axios & Appels API
+ ├── components/    # Composants réutilisables (Navbar, Button, etc.)
+ ├── context/       # Gestion de l'état global (AuthContext)
+ ├── pages/         # Vues principales de l'application
+ ├── App.jsx        # Root component & Routing
+ └── index.css      # Directives Tailwind v4
+🤝 Backend
+Le serveur de cette application se trouve sur le dépôt suivant :
+👉 PixelCraftHub Backend
+
+## 📝 Licence
+Distribué sous la licence MIT. Voir LICENSE pour plus d'informations.
