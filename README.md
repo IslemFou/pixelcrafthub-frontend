@@ -1,16 +1,36 @@
-# React + Vite
+# 🎨 PixelCraftHub - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> La plateforme de mise en relation entre Freelances Web et Clients exigeants.
 
-Currently, two official plugins are available:
+PixelCraftHub est une marketplace moderne permettant aux créateurs (Designers, Développeurs) de proposer leurs services via un système de devis et de gestion de projets en temps réel.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Stack Technique
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Ce projet est propulsé par les dernières technologies du web :
 
-## Expanding the ESLint configuration
+* **Framework :** [React 18+](https://reactjs.org/) avec **Vite** pour une expérience de développement ultra-rapide.
+* **Styling :** [Tailwind CSS v4](https://tailwindcss.com/) (Moteur de rendu CSS haute performance).
+* **Navigation :** React Router v6.
+* **API Client :** Axios avec intercepteurs pour la gestion automatique des JWT.
+* **Design :** Glassmorphism & Dark Mode natif.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Fonctionnalités (MVP)
+
+- [x] **Système d'Authentification :** Connexion/Inscription avec rôles (Client vs Prestataire).
+- [x] **Dashboard Dynamique :** Statistiques personnalisées selon le profil utilisateur.
+- [ ] **Gestion de Services :** Catalogue de services Web & Design.
+- [ ] **Projets & Milestones :** Suivi de l'avancement technique (Barre de progression).
+- [ ] **Espace de Discussion :** (En cours) Messagerie entre clients et freelances.
+
+---
+
+## ⚙️ Installation et Lancement
+
+1. **Cloner le projet :**
+   ```bash
+   git clone [https://github.com/IslemFou/pixelcrafthub-frontend.git](https://github.com/IslemFou/pixelcrafthub-frontend.git)
+   cd pixelcrafthub-frontend
