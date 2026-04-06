@@ -17,6 +17,20 @@ const Register = () => {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
+    //password checking
+    const [showPassword, setShowPassword] = useState(false);
+    const [strength, setStrength] = useState(0);
+
+    const checkStrength = (pass) => {
+        let score = 0;
+        if (pass.length > 0) score++;      // Commencé
+        if (pass.length >= 8) score++;     // Longueur
+        if (/[A-Z]/.test(pass)) score++;   // Majuscule
+        if (/[0-9]/.test(pass)) score++;   // Chiffre
+        if (/[^A-Za-z0-9]/.test(pass)) score++; // Caractère spécial
+        setStrength(score);
+    };
+
     // --- 1. FONCTION DE VALIDATION ---
     const validateForm = () => {
         let newErrors = {};
@@ -38,6 +52,18 @@ const Register = () => {
             } else if (!siretRegex.test(formData.siret)) {
                 newErrors.siret = "SIRET must be 14 digits";
             }
+        }
+        // REGEX MOT DE PASSE : 
+        // ^(?=.*[a-z]) : Au moins une minuscule
+        // (?=.*[A-Z])  : Au moins une majuscule
+        // (?=.*\d)     : Au moins un chiffre
+        // .{8,}        : Au moins 8 caractères
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+        if (!formData.password) {
+            newErrors.password = "Password is required";
+        } else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = "Must contain 8+ chars, 1 uppercase, 1 lowercase and 1 number";
         }
 
         setErrors(newErrors);
@@ -122,14 +148,54 @@ const Register = () => {
                     </div>
 
                     {/* Password */}
-                    <div>
+
+                    <div className="relative group">
                         <label className="block text-sm font-medium text-gray-300">Password</label>
-                        <input
-                            type="password"
-                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none"
-                            placeholder="••••••••"
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none pr-12"
+                                placeholder="••••••••"
+                                onChange={(e) => {
+                                    setFormData({ ...formData, password: e.target.value });
+                                    checkStrength(e.target.value);
+                                }}
+                            />
+                            {/* L'icône de l'œil */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                            >
+                                {showPassword ? "🙈" : "👁️"}
+                                {/* Ou <EyeOff size={20} /> : <Eye size={20} /> si tu as lucide-react */}
+                            </button>
+                        </div>
+
+                        {/* Barre de progression dynamique */}
+                        {formData.password.length > 0 && (
+                            <div className="mt-2 space-y-1">
+                                <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-white/10">
+                                    <div
+                                        className={`h-full transition-all duration-500 ${strength <= 1 ? "w-1/4 bg-red-500" :
+                                            strength <= 2 ? "w-2/4 bg-orange-500" :
+                                                strength <= 3 ? "w-3/4 bg-yellow-500" :
+                                                    "w-full bg-green-500"
+                                            }`}
+                                    />
+                                </div>
+                                <p className={`text-[10px] font-medium ${strength <= 1 ? "text-red-400" :
+                                    strength <= 2 ? "text-orange-400" :
+                                        strength <= 3 ? "text-yellow-400" :
+                                            "text-green-400"
+                                    }`}>
+                                    {strength <= 1 && "Weak password"}
+                                    {strength === 2 && "Medium password"}
+                                    {strength === 3 && "Strong password"}
+                                    {strength >= 4 && "Very secure password"}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Role Selection */}
