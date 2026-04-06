@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext'; // On l'utilisera pour sto
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
               <Route path="/" element={
                 <div className="text-center">
                   <h1 className="text-5xl font-extrabold text-cyan-400 mb-4">
-                    PixelCraftHub : Connecté !
+                    Welcome to PixelCraftHub
                   </h1>
                   <p className="text-gray-400">Prêt à lancer ton prochain projet ?</p>
                 </div>
@@ -29,7 +30,9 @@ function App() {
               {/* Route Login */}
               <Route path="/login" element={<Login />} />
 
-              {/* Route Dashboard (à créer plus tard) */}
+              <Route path="/register" element={<Register />} />
+
+              {/* Route Dashboard */}
               <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </main>
