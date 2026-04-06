@@ -4,9 +4,11 @@ import axios from '../api/axios';
 
 const Register = () => {
     const [formData, setFormData] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
+        phone: '',
         role: 'client'
     });
 
@@ -15,7 +17,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            //Appelà l'API Backend
+            //Appel à l'API Backend
             await axios.post('/auth/register', formData);
             alert("Account created successfully ! Login");
             navigate('/login');
@@ -30,15 +32,28 @@ const Register = () => {
                 <h2 className="text-3xl font-bold text-center text-white italic">join <span className="text-cyan-400">PixelCraft</span></h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300">Full Name</label>
-                        <input
-                            type="text"
-                            required
-                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none"
-                            placeholder="John Doe"
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        />
+                    <div className="flex">
+                        <div className="w-50">
+                            <label className="block text-sm font-medium text-gray-300">First Name</label>
+                            <input
+                                type="text"
+                                required
+                                className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none"
+                                placeholder="John"
+                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            />
+                        </div>
+
+                        <div className="mx-1 w-50">
+                            <label className="block text-sm font-medium text-gray-300">Last Name</label>
+                            <input
+                                type="text"
+                                required
+                                className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none"
+                                placeholder="Doe"
+                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            />
+                        </div>
                     </div>
 
                     <div>
@@ -49,6 +64,16 @@ const Register = () => {
                             className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none"
                             placeholder="pixel@craft.com"
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300">Phone</label>
+                        <input
+                            type="tel"
+                            required
+                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none"
+                            placeholder="+33 6 12 34 56 78"
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         />
                     </div>
 
@@ -70,7 +95,7 @@ const Register = () => {
                             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                         >
                             <option value="client">Client (Je cherche un service)</option>
-                            <option value="freelance">Prestataire (Je propose mes services)</option>
+                            <option value="provider">Prestataire (Je propose mes services)</option>
                         </select>
                     </div>
 
@@ -84,6 +109,8 @@ const Register = () => {
 
                 <p className="text-center text-sm text-gray-400">
                     Déjà inscrit ? <Link to="/login" className="text-cyan-400 hover:underline">Connectez-vous</Link>
+                </p>
+                <p className="text-center text-sm text-gray-400"><Link to="/login" className="text-cyan-400 hover:underline">Se connecter en mode invité</Link>
                 </p>
             </div>
         </div>
