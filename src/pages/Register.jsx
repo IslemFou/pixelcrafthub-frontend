@@ -98,12 +98,20 @@ const Register = () => {
                 roles: [formData.role]
             };
 
-            await API.post('/auth/register', dataToSubmit);
+            const response = await API.post('/auth/register', dataToSubmit);
             console.log("Réponse Backend:", response.data);
-            alert("Account created successfully! Please log in.");
-            navigate('/login');
+
+            // On vérifie si le backend a renvoyé success: true
+            if (response.data.success) {
+                alert("Account created successfully! Please log in.");
+                navigate('/login');
+            }
+
         } catch (error) {
-            alert(error.response?.data?.message || "Registration error");
+            console.error("ERREUR DÉTAILLÉE :", error);
+            // Affiche le vrai message du serveur s'il existe
+            const message = error.response?.data?.message || "Registration error";
+            alert(message);
         }
     };
 
