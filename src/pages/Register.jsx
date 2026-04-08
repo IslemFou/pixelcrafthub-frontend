@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from '../api/axios';
+import API from '../api/axios';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -34,35 +34,40 @@ const Register = () => {
     // --- 1. FONCTION DE VALIDATION ---
     const validateForm = () => {
         let newErrors = {};
-
-        if (formData.firstName.length < 2) newErrors.firstName = "First name is too short";
-        if (formData.lastName.length < 2) newErrors.lastName = "Last name is too short";
+        const firstName = (formData.firstName || "").toString().trim();
+        const lastName = (formData.lastName || "").toString().trim();
+        const email = (formData.email || "").toString().trim();
+        const phone = (formData.phone || "").toString().trim();
+        const password = (formData.password || "").toString();
+        if (firstName.length < 2) newErrors.firstName = "First name is too short";
+        if (lastName.length < 2) newErrors.lastName = "Last name is too short";
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) newErrors.email = "Invalid Email";
+        if (!emailRegex.test(email)) newErrors.email = "Invalid Email";
 
         const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(formData.phone)) newErrors.phone = "Invalid Phone number (10 digits)";
+        if (!phoneRegex.test(phone.replace(/[\s-]/g, ''))) {
+            newErrors.phone = "Invalid Phone number (10 digits)";
+        }
 
         if (formData.role === 'company') {
-            if (formData.companyName.length < 2) newErrors.companyName = "Company name is too short";
+            const companyName = (formData.companyName || "").toString().trim();
+            const siret = (formData.siret || "").toString().trim();
+
+            if (companyName.length < 2) newErrors.companyName = "Company name is too short";
+
             const siretRegex = /^[0-9]{14}$/;
-            if (!formData.siret) {
+            if (!siret) {
                 newErrors.siret = "SIRET is required for companies";
-            } else if (!siretRegex.test(formData.siret)) {
+            } else if (!siretRegex.test(siret)) {
                 newErrors.siret = "SIRET must be 14 digits";
             }
         }
-        // REGEX MOT DE PASSE : 
-        // ^(?=.*[a-z]) : Au moins une minuscule
-        // (?=.*[A-Z])  : Au moins une majuscule
-        // (?=.*\d)     : Au moins un chiffre
-        // .{8,}        : Au moins 8 caractères
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
-        if (!formData.password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!password) {
             newErrors.password = "Password is required";
-        } else if (!passwordRegex.test(formData.password)) {
+        } else if (!passwordRegex.test(password)) {
             newErrors.password = "Must contain 8+ chars, 1 uppercase, 1 lowercase and 1 number";
         }
 
@@ -73,6 +78,16 @@ const Register = () => {
     // --- 2. GESTION DE LA SOUMISSION ---
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("1. Tentative de soumission...");
+
+        const isValid = validateForm();
+        console.log("2. Résultat validation :", isValid);
+        // console.log("3. Erreurs actuelles :", newErrors); // Si isValid est false, regarde ici
+
+        if (!isValid) {
+            alert("Formulaire invalide ! Vérifiez les champs."); // Ajoute ça pour voir
+            return;
+        }
 
         if (!validateForm()) return;
 
@@ -83,7 +98,8 @@ const Register = () => {
                 roles: [formData.role]
             };
 
-            await axios.post('/auth/register', dataToSubmit);
+            await API.post('/auth/register', dataToSubmit);
+            console.log("Réponse Backend:", response.data);
             alert("Account created successfully! Please log in.");
             navigate('/login');
         } catch (error) {
@@ -106,6 +122,7 @@ const Register = () => {
                                 type="text"
                                 className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.firstName ? 'border-red-500' : 'border-white/10'}`}
                                 placeholder="John"
+                                value={formData.firstName}
                                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                             />
                             {errors.firstName && <p className="text-red-500 text-[10px] mt-1">{errors.firstName}</p>}
@@ -117,6 +134,7 @@ const Register = () => {
                                 type="text"
                                 className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.lastName ? 'border-red-500' : 'border-white/10'}`}
                                 placeholder="Doe"
+                                value={formData.lastName}
                                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                             />
                             {errors.lastName && <p className="text-red-500 text-[10px] mt-1">{errors.lastName}</p>}
@@ -125,11 +143,14 @@ const Register = () => {
 
                     {/* Email */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">Email</label>
+                        <label htmlFor="email"
+                            className="block text-sm font-medium text-gray-300">Email</label>
                         <input
-                            type="email"
+                            id="email"
+                            type="text"
                             className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.email ? 'border-red-500' : 'border-white/10'}`}
                             placeholder="pixel@craft.com"
+                            value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -142,6 +163,7 @@ const Register = () => {
                             type="tel"
                             className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.phone ? 'border-red-500' : 'border-white/10'}`}
                             placeholder="0612345678"
+                            value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         />
                         {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -156,6 +178,7 @@ const Register = () => {
                                 type={showPassword ? "text" : "password"}
                                 className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none pr-12"
                                 placeholder="••••••••"
+                                value={formData.password}
                                 onChange={(e) => {
                                     setFormData({ ...formData, password: e.target.value });
                                     checkStrength(e.target.value);
@@ -207,7 +230,7 @@ const Register = () => {
                             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                         >
                             <option value="freelancer">Freelancer, I'm looking for missions</option>
-                            <option value="company">Company, I offer my services</option>
+                            <option value="company">Company, I offer missions</option>
                         </select>
                     </div>
 
@@ -220,6 +243,7 @@ const Register = () => {
                                     type="text"
                                     className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.companyName ? 'border-red-500' : 'border-white/10'}`}
                                     placeholder="Pixel Studio"
+                                    value={formData.companyName}
                                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                                 />
                                 {errors.companyName && <p className="text-red-500 text-[10px] mt-1">{errors.companyName}</p>}
@@ -231,6 +255,7 @@ const Register = () => {
                                     maxLength="14"
                                     className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.siret ? 'border-red-500' : 'border-white/10'}`}
                                     placeholder="14 digits"
+                                    value={formData.siret}
                                     onChange={(e) => setFormData({ ...formData, siret: e.target.value })}
                                 />
                                 {errors.siret && <p className="text-red-500 text-xs mt-1">{errors.siret}</p>}
@@ -239,7 +264,13 @@ const Register = () => {
                     )}
 
                     <button
+                        id="register-submit-btn"
+                        name="submit-registration"
                         type="submit"
+                        onClick={(e) => {
+                            console.log("Clic forcé détecté");
+                            // On laisse le onSubmit du form gérer le reste
+                        }}
                         className="w-full py-3 mt-4 font-semibold text-white bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg hover:scale-[1.02] transition-all shadow-lg"
                     >
                         Create my account

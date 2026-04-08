@@ -14,7 +14,7 @@ const Login = () => {
             await login(email, password);
             navigate('/dashboard'); // redirection apres success
         } catch (error) {
-            alert("Erreur de connexion : " + error.response?.data?.message);
+            alert("Erreur de connexion : " + (error.response?.data?.message || "Identifiants invalides ou problème de serveur"));
         }
     };
 
