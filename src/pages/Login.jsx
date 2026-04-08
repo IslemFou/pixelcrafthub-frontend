@@ -1,15 +1,21 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API from '../api/axios';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
+
+    //password checking
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("1. Tentative de soumission...");
         try {
             await login(email, password);
             navigate('/dashboard'); // redirection apres success
@@ -43,7 +49,7 @@ const Login = () => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-white transition-all"
+                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none text-cyan-500 transition-all autofill:shadow-[0_0_0_30px_#1a1a1a_inset] [&-webkit-autofill]:text-cyan-500"
                             placeholder="••••••••"
                             required
                         />

@@ -82,7 +82,6 @@ const Register = () => {
 
         const isValid = validateForm();
         console.log("2. Résultat validation :", isValid);
-        // console.log("3. Erreurs actuelles :", newErrors); // Si isValid est false, regarde ici
 
         if (!isValid) {
             alert("Formulaire invalide ! Vérifiez les champs."); // Ajoute ça pour voir
@@ -184,7 +183,7 @@ const Register = () => {
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none pr-12"
+                                className={`w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-cyan-500 outline-none pr-12 transition-all autofill:shadow-[0_0_0_30px_#1a1a1a_inset] [&-webkit-autofill]:text-cyan-500 ${errors.password ? 'border-red-500' : 'border-white/10'}`}
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={(e) => {
@@ -192,6 +191,7 @@ const Register = () => {
                                     checkStrength(e.target.value);
                                 }}
                             />
+                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                             {/* L'icône de l'œil */}
                             <button
                                 type="button"
