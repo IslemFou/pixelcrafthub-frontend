@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
@@ -13,14 +15,53 @@ const Login = () => {
     //password checking
     const [showPassword, setShowPassword] = useState(false);
 
+    const validateForm = () => {
+        let newErrors = {};
+
+        //Nettoyage des entrées
+        const email = (formData.email || "").toString().trim();
+        const password = (formData.password || "").toString();
+
+        //Validation Email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            newErrors.email = "Email is required";
+        } else if (!emailRegex.test(email)) {
+            newErrors.email = "Invalid email format";
+        }
+
+        //validate password (juste on vérifie s'il est remplie)
+        if (!password) {
+            newErrors.password = "Password is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+
+    };
+
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("1. Tentative de soumission...");
+        console.log("1. Tentative de Login...");
+
+        if (!validateForm()) return;
         try {
-            await login(email, password);
-            navigate('/dashboard'); // redirection apres success
+            //on utilise l'instance API 127.0.0.1:3000
+            const response = await API.post('/auth/login', formData);
+            console.log("Réponse Backend:", response.data);
+
+            if (response.data.success) {
+                login(response.data);
+                navigate('/dashboard'); // redirection apres success
+            }
         } catch (error) {
-            alert("Erreur de connexion : " + (error.response?.data?.message || "Identifiants invalides ou problème de serveur"));
+            console.error("Login Error:", error);
+            //on affiche le message d'erreur 
+            const message = error.response?.data?.message || "Login Failed";
+            setErrors({ server: message });
         }
     };
 
@@ -34,25 +75,39 @@ const Login = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-300">Email</label>
                         <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none text-white transition-all"
+                            type="text"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className={`w-full px-4 py-3 mt-1 bg-white/5 border rounded-lg focus:ring-2 focus:ring-cyan-500 text-white outline-none ${errors.email ? 'border-red-500' : 'border-white/10'}`}
                             placeholder="votre@email.com"
                             required
                         />
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">Mot de passe</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none text-cyan-500 transition-all autofill:shadow-[0_0_0_30px_#1a1a1a_inset] [&-webkit-autofill]:text-cyan-500"
-                            placeholder="••••••••"
-                            required
-                        />
+                        <label className="block text-sm font-medium text-gray-300">Password</label>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={formData.password}
+                                onChange={(e) => {
+                                    setFormData({ ...formData, password: e.target.value });
+                                }}
+                                className={`w-full px-4 py-3 mt-1 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-cyan-500 outline-none pr-12 transition-all autofill:shadow-[0_0_0_30px_#1a1a1a_inset] [&-webkit-autofill]:text-cyan-500 ${errors.password ? 'border-red-500' : 'border-white/10'}`}
+                                placeholder="••••••••"
+                                required
+                            />
+                            {/* L'icône de l'œil positionnée absolument par rapport au div parent */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 mt-0.5 text-gray-400 hover:text-white transition-colors"
+                            >
+                                {showPassword ? "🙈" : "👁️"}
+                            </button>
+                        </div>
+                        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                     </div>
 
                     <button

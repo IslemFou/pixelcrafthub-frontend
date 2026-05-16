@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectedRoutes';
 
 function App() {
   return (
@@ -33,10 +34,13 @@ function App() {
               <Route path="/register" element={<Register />} />
 
               {/* Route Dashboard */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard /> {/* ← c'est lui, "children" */}
+                </ProtectedRoute>
+              } />
             </Routes>
           </main>
-
         </div>
       </Router>
     </AuthProvider>

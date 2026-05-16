@@ -75,6 +75,12 @@ const Register = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+
+
+
+
+
+
     // --- 2. GESTION DE LA SOUMISSION ---
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -87,8 +93,6 @@ const Register = () => {
             alert("Formulaire invalide ! Vérifiez les champs."); // Ajoute ça pour voir
             return;
         }
-
-        if (!validateForm()) return;
 
         try {
             // On prépare les données pour le backend (mappage role -> roles si nécessaire)
@@ -290,7 +294,7 @@ const Register = () => {
                         Already registered? <Link to="/login" className="text-cyan-400 hover:underline">Log in</Link>
                     </p>
                     <p className="text-sm text-gray-400">
-                        <Link to="/login" className="text-cyan-400 hover:underline">Login in Guest mode</Link>
+                        <Link to="/" className="text-cyan-400 hover:underline">Login in Guest mode</Link>
                     </p>
                 </div>
             </div>
